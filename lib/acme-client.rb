@@ -1,7 +1,11 @@
+require 'openssl'
+module OpenSSL::PKey
+  class EC # not in jRuby...
+  end
+end
 require 'faraday'
 require 'json'
 require 'json/jwt'
-require 'openssl'
 require 'digest'
 require 'forwardable'
 

@@ -25,16 +25,23 @@ class Acme::Client::CertificateRequest
 
   def_delegators :csr, :to_pem, :to_der
 
-  def initialize(common_name: nil, names: [], private_key: generate_private_key, subject: {}, digest: DEFAULT_DIGEST.new)
-    @digest = digest
-    @private_key = private_key
-    @subject = normalize_subject(subject)
-    @common_name = common_name || @subject[SUBJECT_KEYS[:common_name]] || @subject[:common_name]
-    @names = names.to_a.dup
+  # rubocop:disable Metrics/AbcSize
+  def initialize(options = {})
+    options[:names] ||= []
+    options[:private_key] ||= generate_private_key
+    options[:subject] ||= {}
+    options[:digest] ||= DEFAULT_DIGEST.new
+
+    @digest = options[:digest]
+    @private_key = options[:private_key]
+    @subject = normalize_subject(options[:subject])
+    @common_name = options[:common_name] || @subject[SUBJECT_KEYS[:common_name]] || @subject[:common_name]
+    @names = options[:names].to_a.dup
     normalize_names
     @subject[SUBJECT_KEYS[:common_name]] ||= @common_name
     validate_subject
   end
+  # rubocop:enable Metrics/AbcSize
 
   def csr
     @csr ||= generate

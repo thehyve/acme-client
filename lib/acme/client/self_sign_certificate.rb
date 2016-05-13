@@ -4,11 +4,11 @@ class Acme::Client::SelfSignCertificate
   extend Forwardable
   def_delegators :certificate, :to_pem, :to_der
 
-  def initialize(subject_alt_names:, not_before: default_not_before, not_after: default_not_after, private_key: generate_private_key)
-    @private_key = private_key
-    @subject_alt_names = subject_alt_names
-    @not_before = not_before
-    @not_after = not_after
+  def initialize(options)
+    @private_key = options[:private_key] || generate_private_key
+    @subject_alt_names = options[:subject_alt_names]
+    @not_before = options[:not_before] || default_not_before
+    @not_after = options[:not_after] || default_not_after
   end
 
   def certificate
@@ -44,6 +44,7 @@ class Acme::Client::SelfSignCertificate
 
   def generate_certificate
     certificate = OpenSSL::X509::Certificate.new
+    certificate.serial = 1
     certificate.not_before = not_before
     certificate.not_after = not_after
     certificate.public_key = private_key.public_key

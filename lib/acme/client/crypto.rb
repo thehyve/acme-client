@@ -5,9 +5,9 @@ class Acme::Client::Crypto
     @private_key = private_key
   end
 
-  def generate_signed_jws(header:, payload:)
-    jwt = JSON::JWT.new(payload || {})
-    jwt.header.merge!(header || {})
+  def generate_signed_jws(options)
+    jwt = JSON::JWT.new(options[:payload] || {})
+    jwt.header.merge!(options[:header] || {})
     jwt.header[:jwk] = jwk
     jwt.signature = jwt.sign(private_key, :RS256).signature
     jwt.to_json(syntax: :flattened)

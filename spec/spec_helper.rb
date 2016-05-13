@@ -1,5 +1,5 @@
-$LOAD_PATH.unshift File.join(__dir__, '../lib')
-$LOAD_PATH.unshift File.join(__dir__, 'support')
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '../lib')
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), 'support')
 
 require 'acme-client'
 

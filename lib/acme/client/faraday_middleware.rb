@@ -1,9 +1,9 @@
 class Acme::Client::FaradayMiddleware < Faraday::Middleware
   attr_reader :env, :response, :client
 
-  def initialize(app, client:)
+  def initialize(app, options)
     super(app)
-    @client = client
+    @client = options[:client]
   end
 
   def call(env)

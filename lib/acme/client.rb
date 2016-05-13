@@ -7,29 +7,32 @@ class Acme::Client
     'revoke-cert' => '/acme/revoke-cert'
   }.freeze
 
-  def initialize(private_key:, endpoint: DEFAULT_ENDPOINT, directory_uri: nil, connection_options: {})
-    @endpoint, @private_key, @directory_uri, @connection_options = endpoint, private_key, directory_uri, connection_options
+  def initialize(options = {})
+    options[:endpoint] ||= DEFAULT_ENDPOINT
+    options[:connection_options] ||= {}
+    @endpoint, @private_key, @directory_uri, @connection_options =
+      options[:endpoint], options[:private_key], options[:directory_uri], options[:connection_options]
     @nonces ||= []
     load_directory!
   end
 
   attr_reader :private_key, :nonces, :operation_endpoints
 
-  def register(contact:)
+  def register(options = {})
     payload = {
-      resource: 'new-reg', contact: Array(contact)
+      resource: 'new-reg', contact: Array(options[:contact])
     }
 
     response = connection.post(@operation_endpoints.fetch('new-reg'), payload)
     ::Acme::Client::Resources::Registration.new(self, response)
   end
 
-  def authorize(domain:)
+  def authorize(options = {})
     payload = {
       resource: 'new-authz',
       identifier: {
         type: 'dns',
-        value: domain
+        value: options[:domain]
       }
     }
 
@@ -60,7 +63,7 @@ class Acme::Client
   end
 
   def connection
-    @connection ||= Faraday.new(@endpoint, **@connection_options) do |configuration|
+    @connection ||= Faraday.new(@endpoint, @connection_options) do |configuration|
       configuration.use Acme::Client::FaradayMiddleware, client: self
       configuration.adapter Faraday.default_adapter
     end

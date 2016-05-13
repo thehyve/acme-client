@@ -105,7 +105,7 @@ describe Acme::Client::CertificateRequest do
   it 'adds the common name to the subject' do
     request = Acme::Client::CertificateRequest.new(common_name: 'example.org', private_key: test_key)
 
-    subject = request.csr.subject.to_a.map { |name, value, _| [name, value] }.to_h
+    subject = Hash[request.csr.subject.to_a.map { |name, value, _| [name, value] }]
     expect(subject['CN']).to eq('example.org')
   end
 
@@ -116,7 +116,7 @@ describe Acme::Client::CertificateRequest do
     }
     request = Acme::Client::CertificateRequest.new(private_key: test_key, subject: subject)
 
-    csr_subject = request.csr.subject.to_a.map { |name, value, _| [name, value] }.to_h
+    csr_subject = Hash[request.csr.subject.to_a.map { |name, value, _| [name, value] }]
     expect(csr_subject).to eq(subject)
   end
 

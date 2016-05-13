@@ -2,7 +2,7 @@ require 'yaml'
 
 module SSLHelper
   class KeyStash
-    KEYSTASH_PATH = File.join(__dir__, '../fixtures/keystash.yml')
+    KEYSTASH_PATH = File.join(File.dirname(__FILE__), '../fixtures/keystash.yml')
 
     def initialize
       @keystash = load
